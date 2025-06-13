@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import axios from "axios";
 
 const Services = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -15,25 +15,28 @@ const Services = () => {
 
   const fetchServices = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/services');
+      const response = await axios.get(
+        "https://car-service-backend-zqmk.onrender.com/api/services"
+      );
       setServices(response.data);
     } catch (error) {
-      console.error('Error fetching services:', error);
+      console.error("Error fetching services:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredServices = selectedCategory === 'all' 
-    ? services 
-    : services.filter(service => service.category === selectedCategory);
+  const filteredServices =
+    selectedCategory === "all"
+      ? services
+      : services.filter((service) => service.category === selectedCategory);
 
   const categories = [
-    { value: 'all', label: 'All Services' },
-    { value: 'maintenance', label: 'Maintenance' },
-    { value: 'repair', label: 'Repair' },
-    { value: 'inspection', label: 'Inspection' },
-    { value: 'emergency', label: 'Emergency' }
+    { value: "all", label: "All Services" },
+    { value: "maintenance", label: "Maintenance" },
+    { value: "repair", label: "Repair" },
+    { value: "inspection", label: "Inspection" },
+    { value: "emergency", label: "Emergency" },
   ];
 
   if (loading) {
@@ -53,7 +56,8 @@ const Services = () => {
         <div className="container">
           <h1 className="page-title">Our Professional Services</h1>
           <p className="page-subtitle">
-            Comprehensive automotive care from routine maintenance to complex repairs
+            Comprehensive automotive care from routine maintenance to complex
+            repairs
           </p>
         </div>
       </section>
@@ -63,10 +67,12 @@ const Services = () => {
         <div className="container">
           {/* Category Filter */}
           <div className="category-filter">
-            {categories.map(category => (
+            {categories.map((category) => (
               <button
                 key={category.value}
-                className={`filter-btn ${selectedCategory === category.value ? 'active' : ''}`}
+                className={`filter-btn ${
+                  selectedCategory === category.value ? "active" : ""
+                }`}
                 onClick={() => setSelectedCategory(category.value)}
               >
                 {category.label}
@@ -77,7 +83,7 @@ const Services = () => {
           {/* Services Grid */}
           {filteredServices.length > 0 ? (
             <div className="services-grid grid grid-3">
-              {filteredServices.map(service => (
+              {filteredServices.map((service) => (
                 <div key={service._id} className="service-card card">
                   <div className="service-icon">
                     {getCategoryIcon(service.category)}
@@ -86,23 +92,23 @@ const Services = () => {
                     <h3 className="service-name">{service.name}</h3>
                     <p className="service-description">{service.description}</p>
                     <div className="service-details">
-                      <div className="service-price">
-                        ${service.price}
-                      </div>
+                      <div className="service-price">${service.price}</div>
                       <div className="service-duration">
                         {service.duration} min
                       </div>
                     </div>
                     <div className="service-category">
-                      <span className={`category-badge category-${service.category}`}>
+                      <span
+                        className={`category-badge category-${service.category}`}
+                      >
                         {service.category}
                       </span>
                     </div>
                   </div>
                   <div className="card-footer">
                     {isAuthenticated ? (
-                      <Link 
-                        to="/book-appointment" 
+                      <Link
+                        to="/book-appointment"
                         state={{ selectedService: service }}
                         className="btn btn-primary full-width"
                       >
@@ -128,7 +134,10 @@ const Services = () => {
           <div className="services-cta">
             <div className="cta-card">
               <h2>Don't see what you need?</h2>
-              <p>We offer many specialized services not listed here. Contact us for custom solutions.</p>
+              <p>
+                We offer many specialized services not listed here. Contact us
+                for custom solutions.
+              </p>
               <Link to="/contact" className="btn btn-accent">
                 Contact Us
               </Link>
@@ -139,7 +148,11 @@ const Services = () => {
 
       <style jsx>{`
         .services-hero {
-          background: linear-gradient(135deg, var(--dark-gray) 0%, var(--black) 100%);
+          background: linear-gradient(
+            135deg,
+            var(--dark-gray) 0%,
+            var(--black) 100%
+          );
           color: var(--white);
           padding: 4rem 0;
           text-align: center;
@@ -246,10 +259,22 @@ const Services = () => {
           text-transform: capitalize;
         }
 
-        .category-maintenance { background-color: #dbeafe; color: #1e40af; }
-        .category-repair { background-color: #fed7aa; color: #c2410c; }
-        .category-inspection { background-color: #dcfce7; color: #166534; }
-        .category-emergency { background-color: #fee2e2; color: #991b1b; }
+        .category-maintenance {
+          background-color: #dbeafe;
+          color: #1e40af;
+        }
+        .category-repair {
+          background-color: #fed7aa;
+          color: #c2410c;
+        }
+        .category-inspection {
+          background-color: #dcfce7;
+          color: #166534;
+        }
+        .category-emergency {
+          background-color: #fee2e2;
+          color: #991b1b;
+        }
 
         .full-width {
           width: 100%;
@@ -266,7 +291,11 @@ const Services = () => {
         }
 
         .cta-card {
-          background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+          background: linear-gradient(
+            135deg,
+            var(--primary-blue) 0%,
+            var(--secondary-blue) 100%
+          );
           color: var(--white);
           padding: 3rem;
           border-radius: 12px;
@@ -321,12 +350,12 @@ const Services = () => {
 // Helper function to get category icons
 const getCategoryIcon = (category) => {
   const icons = {
-    maintenance: '🔧',
-    repair: '⚙️',
-    inspection: '🔍',
-    emergency: '🚨'
+    maintenance: "🔧",
+    repair: "⚙️",
+    inspection: "🔍",
+    emergency: "🚨",
   };
-  return icons[category] || '🚗';
+  return icons[category] || "🚗";
 };
 
 export default Services;

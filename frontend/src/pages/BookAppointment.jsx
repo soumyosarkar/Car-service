@@ -1,22 +1,22 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import axios from "axios";
 
 const BookAppointment = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    service: '',
-    appointmentDate: '',
-    appointmentTime: '',
+    service: "",
+    appointmentDate: "",
+    appointmentTime: "",
     vehicleInfo: {
-      make: '',
-      model: '',
-      year: '',
-      plateNumber: ''
+      make: "",
+      model: "",
+      year: "",
+      plateNumber: "",
     },
-    notes: ''
+    notes: "",
   });
 
   const { user, isAuthenticated, isAdmin } = useAuth();
@@ -25,45 +25,47 @@ const BookAppointment = () => {
 
   useEffect(() => {
     if (!isAuthenticated || !isAdmin) {
-      navigate('/');
+      navigate("/");
       return;
     }
     fetchServices();
 
     // If a service was selected from the services page
     if (location.state?.selectedService) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        service: location.state.selectedService._id
+        service: location.state.selectedService._id,
       }));
     }
   }, [isAuthenticated, isAdmin, navigate, location]);
 
   const fetchServices = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/services');
+      const response = await axios.get(
+        "https://car-service-backend-zqmk.onrender.com/api/services"
+      );
       setServices(response.data);
     } catch (error) {
-      console.error('Error fetching services:', error);
+      console.error("Error fetching services:", error);
     }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    if (name.startsWith('vehicle.')) {
-      const field = name.split('.')[1];
-      setFormData(prev => ({
+
+    if (name.startsWith("vehicle.")) {
+      const field = name.split(".")[1];
+      setFormData((prev) => ({
         ...prev,
         vehicleInfo: {
           ...prev.vehicleInfo,
-          [field]: value
-        }
+          [field]: value,
+        },
       }));
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [name]: value
+        [name]: value,
       }));
     }
   };
@@ -73,30 +75,44 @@ const BookAppointment = () => {
     setLoading(true);
 
     try {
-      await axios.post('http://localhost:5000/api/appointments', formData);
-      alert('Appointment booked successfully!');
-      navigate('/my-appointments');
+      await axios.post("http://localhost:5000/api/appointments", formData);
+      alert("Appointment booked successfully!");
+      navigate("/my-appointments");
     } catch (error) {
-      console.error('Error booking appointment:', error);
-      alert('Failed to book appointment. Please try again.');
+      console.error("Error booking appointment:", error);
+      alert("Failed to book appointment. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const selectedService = services.find(s => s._id === formData.service);
+  const selectedService = services.find((s) => s._id === formData.service);
 
   // Generate time slots
   const timeSlots = [
-    '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
-    '11:00', '11:30', '13:00', '13:30', '14:00', '14:30',
-    '15:00', '15:30', '16:00', '16:30', '17:00'
+    "08:00",
+    "08:30",
+    "09:00",
+    "09:30",
+    "10:00",
+    "10:30",
+    "11:00",
+    "11:30",
+    "13:00",
+    "13:30",
+    "14:00",
+    "14:30",
+    "15:00",
+    "15:30",
+    "16:00",
+    "16:30",
+    "17:00",
   ];
 
   // Get minimum date (tomorrow)
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
-  const minDate = tomorrow.toISOString().split('T')[0];
+  const minDate = tomorrow.toISOString().split("T")[0];
 
   return (
     <div className="book-appointment-page">
@@ -115,7 +131,9 @@ const BookAppointment = () => {
               <div className="form-section">
                 <h3 className="section-title">Select Service</h3>
                 <div className="form-group">
-                  <label htmlFor="service" className="form-label">Service Type *</label>
+                  <label htmlFor="service" className="form-label">
+                    Service Type *
+                  </label>
                   <select
                     id="service"
                     name="service"
@@ -125,9 +143,10 @@ const BookAppointment = () => {
                     required
                   >
                     <option value="">Choose a service...</option>
-                    {services.map(service => (
+                    {services.map((service) => (
                       <option key={service._id} value={service._id}>
-                        {service.name} - ${service.price} ({service.duration} min)
+                        {service.name} - ${service.price} ({service.duration}{" "}
+                        min)
                       </option>
                     ))}
                   </select>
@@ -139,7 +158,9 @@ const BookAppointment = () => {
                 <h3 className="section-title">Select Date & Time</h3>
                 <div className="datetime-grid">
                   <div className="form-group">
-                    <label htmlFor="appointmentDate" className="form-label">Date *</label>
+                    <label htmlFor="appointmentDate" className="form-label">
+                      Date *
+                    </label>
                     <input
                       type="date"
                       id="appointmentDate"
@@ -152,7 +173,9 @@ const BookAppointment = () => {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="appointmentTime" className="form-label">Time *</label>
+                    <label htmlFor="appointmentTime" className="form-label">
+                      Time *
+                    </label>
                     <select
                       id="appointmentTime"
                       name="appointmentTime"
@@ -162,8 +185,10 @@ const BookAppointment = () => {
                       required
                     >
                       <option value="">Select time...</option>
-                      {timeSlots.map(time => (
-                        <option key={time} value={time}>{time}</option>
+                      {timeSlots.map((time) => (
+                        <option key={time} value={time}>
+                          {time}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -175,7 +200,9 @@ const BookAppointment = () => {
                 <h3 className="section-title">Vehicle Information</h3>
                 <div className="vehicle-grid">
                   <div className="form-group">
-                    <label htmlFor="vehicle.make" className="form-label">Make *</label>
+                    <label htmlFor="vehicle.make" className="form-label">
+                      Make *
+                    </label>
                     <input
                       type="text"
                       id="vehicle.make"
@@ -188,7 +215,9 @@ const BookAppointment = () => {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="vehicle.model" className="form-label">Model *</label>
+                    <label htmlFor="vehicle.model" className="form-label">
+                      Model *
+                    </label>
                     <input
                       type="text"
                       id="vehicle.model"
@@ -201,7 +230,9 @@ const BookAppointment = () => {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="vehicle.year" className="form-label">Year *</label>
+                    <label htmlFor="vehicle.year" className="form-label">
+                      Year *
+                    </label>
                     <input
                       type="number"
                       id="vehicle.year"
@@ -216,7 +247,9 @@ const BookAppointment = () => {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="vehicle.plateNumber" className="form-label">License Plate *</label>
+                    <label htmlFor="vehicle.plateNumber" className="form-label">
+                      License Plate *
+                    </label>
                     <input
                       type="text"
                       id="vehicle.plateNumber"
@@ -235,7 +268,9 @@ const BookAppointment = () => {
               <div className="form-section">
                 <h3 className="section-title">Additional Information</h3>
                 <div className="form-group">
-                  <label htmlFor="notes" className="form-label">Special Notes or Concerns</label>
+                  <label htmlFor="notes" className="form-label">
+                    Special Notes or Concerns
+                  </label>
                   <textarea
                     id="notes"
                     name="notes"
@@ -248,12 +283,12 @@ const BookAppointment = () => {
                 </div>
               </div>
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="btn btn-primary btn-lg full-width"
                 disabled={loading}
               >
-                {loading ? 'Booking Appointment...' : 'Book Appointment'}
+                {loading ? "Booking Appointment..." : "Book Appointment"}
               </button>
             </form>
           </div>
@@ -273,27 +308,39 @@ const BookAppointment = () => {
                     </div>
                     <div className="summary-item">
                       <span className="label">Price:</span>
-                      <span className="value price">${selectedService.price}</span>
+                      <span className="value price">
+                        ${selectedService.price}
+                      </span>
                     </div>
                     <div className="summary-item">
                       <span className="label">Duration:</span>
-                      <span className="value">{selectedService.duration} minutes</span>
+                      <span className="value">
+                        {selectedService.duration} minutes
+                      </span>
                     </div>
                     {formData.appointmentDate && (
                       <div className="summary-item">
                         <span className="label">Date:</span>
-                        <span className="value">{new Date(formData.appointmentDate).toLocaleDateString()}</span>
+                        <span className="value">
+                          {new Date(
+                            formData.appointmentDate
+                          ).toLocaleDateString()}
+                        </span>
                       </div>
                     )}
                     {formData.appointmentTime && (
                       <div className="summary-item">
                         <span className="label">Time:</span>
-                        <span className="value">{formData.appointmentTime}</span>
+                        <span className="value">
+                          {formData.appointmentTime}
+                        </span>
                       </div>
                     )}
                   </>
                 ) : (
-                  <p className="no-service">Please select a service to see details</p>
+                  <p className="no-service">
+                    Please select a service to see details
+                  </p>
                 )}
               </div>
             </div>
@@ -436,7 +483,11 @@ const BookAppointment = () => {
         }
 
         .contact-info {
-          background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+          background: linear-gradient(
+            135deg,
+            var(--primary-blue) 0%,
+            var(--secondary-blue) 100%
+          );
           color: var(--white);
         }
 

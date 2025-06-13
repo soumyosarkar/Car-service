@@ -1,27 +1,27 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
 
 const AdminDashboard = () => {
   const [appointments, setAppointments] = useState([]);
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('appointments');
+  const [activeTab, setActiveTab] = useState("appointments");
   const [showAddServiceForm, setShowAddServiceForm] = useState(false);
   const [newService, setNewService] = useState({
-    name: '',
-    description: '',
-    price: '',
-    duration: '',
-    category: 'maintenance' // Default category
+    name: "",
+    description: "",
+    price: "",
+    duration: "",
+    category: "maintenance", // Default category
   });
   const { user, isAuthenticated, isAdmin } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!isAuthenticated || !isAdmin) {
-      navigate('/');
+      navigate("/");
       return;
     }
     fetchData();
@@ -30,13 +30,15 @@ const AdminDashboard = () => {
   const fetchData = async () => {
     try {
       const [appointmentsRes, servicesRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/appointments'),
-        axios.get('http://localhost:5000/api/services')
+        axios.get(
+          "https://car-service-backend-zqmk.onrender.com/api/appointments"
+        ),
+        axios.get("https://car-service-backend-zqmk.onrender.com/api/services"),
       ]);
       setAppointments(appointmentsRes.data);
       setServices(servicesRes.data);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     } finally {
       setLoading(false);
     }
@@ -44,40 +46,50 @@ const AdminDashboard = () => {
 
   const updateAppointmentStatus = async (appointmentId, newStatus) => {
     try {
-      await axios.put(`http://localhost:5000/api/appointments/${appointmentId}/status`, {
-        status: newStatus
-      });
+      await axios.put(
+        `https://car-service-backend-zqmk.onrender.com/api/appointments/${appointmentId}/status`,
+        {
+          status: newStatus,
+        }
+      );
       fetchData(); // Refresh data
     } catch (error) {
-      console.error('Error updating appointment status:', error);
-      alert('Failed to update appointment status');
+      console.error("Error updating appointment status:", error);
+      alert("Failed to update appointment status");
     }
   };
 
   const getStatusColor = (status) => {
     const colors = {
-      pending: 'status-pending',
-      confirmed: 'status-confirmed',
-      'in-progress': 'status-in-progress',
-      completed: 'status-completed',
-      cancelled: 'status-cancelled'
+      pending: "status-pending",
+      confirmed: "status-confirmed",
+      "in-progress": "status-in-progress",
+      completed: "status-completed",
+      cancelled: "status-cancelled",
     };
-    return colors[status] || 'status-pending';
+    return colors[status] || "status-pending";
   };
 
   const getStats = () => {
     const totalAppointments = appointments.length;
-    const pendingAppointments = appointments.filter(apt => apt.status === 'pending').length;
-    const todayAppointments = appointments.filter(apt => {
+    const pendingAppointments = appointments.filter(
+      (apt) => apt.status === "pending"
+    ).length;
+    const todayAppointments = appointments.filter((apt) => {
       const today = new Date().toDateString();
       const aptDate = new Date(apt.appointmentDate).toDateString();
       return today === aptDate;
     }).length;
     const totalRevenue = appointments
-      .filter(apt => apt.status === 'completed')
+      .filter((apt) => apt.status === "completed")
       .reduce((sum, apt) => sum + (apt.service?.price || 0), 0);
 
-    return { totalAppointments, pendingAppointments, todayAppointments, totalRevenue };
+    return {
+      totalAppointments,
+      pendingAppointments,
+      todayAppointments,
+      totalRevenue,
+    };
   };
 
   const stats = getStats();
@@ -85,25 +97,28 @@ const AdminDashboard = () => {
   const handleAddService = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/services', newService);
+      await axios.post(
+        "https://car-service-backend-zqmk.onrender.com/api/services",
+        newService
+      );
       fetchData();
       setShowAddServiceForm(false);
       setNewService({
-        name: '',
-        description: '',
-        price: '',
-        duration: '',
-        category: 'maintenance'
+        name: "",
+        description: "",
+        price: "",
+        duration: "",
+        category: "maintenance",
       });
     } catch (error) {
-      console.error('Error adding new service:', error);
-      alert('Failed to add new service');
+      console.error("Error adding new service:", error);
+      alert("Failed to add new service");
     }
   };
 
   const handleNewServiceChange = (e) => {
     const { name, value } = e.target;
-    setNewService(prev => ({ ...prev, [name]: value }));
+    setNewService((prev) => ({ ...prev, [name]: value }));
   };
 
   if (loading) {
@@ -158,15 +173,17 @@ const AdminDashboard = () => {
 
         {/* Tab Navigation */}
         <div className="tab-navigation">
-          <button 
-            className={`tab-btn ${activeTab === 'appointments' ? 'active' : ''}`}
-            onClick={() => setActiveTab('appointments')}
+          <button
+            className={`tab-btn ${
+              activeTab === "appointments" ? "active" : ""
+            }`}
+            onClick={() => setActiveTab("appointments")}
           >
             Appointments ({appointments.length})
           </button>
-          <button 
-            className={`tab-btn ${activeTab === 'services' ? 'active' : ''}`}
-            onClick={() => setActiveTab('services')}
+          <button
+            className={`tab-btn ${activeTab === "services" ? "active" : ""}`}
+            onClick={() => setActiveTab("services")}
           >
             Services ({services.length})
           </button>
@@ -174,7 +191,7 @@ const AdminDashboard = () => {
             className="tab-btn btn-primary"
             onClick={() => setShowAddServiceForm(!showAddServiceForm)}
           >
-            {showAddServiceForm ? 'Cancel Add Service' : 'Add New Service'}
+            {showAddServiceForm ? "Cancel Add Service" : "Add New Service"}
           </button>
         </div>
 
@@ -184,7 +201,9 @@ const AdminDashboard = () => {
             <h2 className="section-title">Add New Service</h2>
             <form onSubmit={handleAddService} className="form-grid">
               <div className="form-group">
-                <label htmlFor="serviceName" className="form-label">Service Name *</label>
+                <label htmlFor="serviceName" className="form-label">
+                  Service Name *
+                </label>
                 <input
                   type="text"
                   id="serviceName"
@@ -196,7 +215,9 @@ const AdminDashboard = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="serviceDescription" className="form-label">Description *</label>
+                <label htmlFor="serviceDescription" className="form-label">
+                  Description *
+                </label>
                 <textarea
                   id="serviceDescription"
                   name="description"
@@ -208,7 +229,9 @@ const AdminDashboard = () => {
                 ></textarea>
               </div>
               <div className="form-group">
-                <label htmlFor="servicePrice" className="form-label">Price *</label>
+                <label htmlFor="servicePrice" className="form-label">
+                  Price *
+                </label>
                 <input
                   type="number"
                   id="servicePrice"
@@ -221,7 +244,9 @@ const AdminDashboard = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="serviceDuration" className="form-label">Duration (minutes) *</label>
+                <label htmlFor="serviceDuration" className="form-label">
+                  Duration (minutes) *
+                </label>
                 <input
                   type="number"
                   id="serviceDuration"
@@ -233,7 +258,9 @@ const AdminDashboard = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="serviceCategory" className="form-label">Category *</label>
+                <label htmlFor="serviceCategory" className="form-label">
+                  Category *
+                </label>
                 <select
                   id="serviceCategory"
                   name="category"
@@ -248,14 +275,16 @@ const AdminDashboard = () => {
                   <option value="emergency">Emergency</option>
                 </select>
               </div>
-              <button type="submit" className="btn btn-primary">Add Service</button>
+              <button type="submit" className="btn btn-primary">
+                Add Service
+              </button>
             </form>
           </div>
         )}
 
         {/* Tab Content */}
         <div className="tab-content">
-          {activeTab === 'appointments' && (
+          {activeTab === "appointments" && (
             <div className="appointments-section">
               <h2 className="section-title">Manage Appointments</h2>
               {appointments.length > 0 ? (
@@ -268,71 +297,112 @@ const AdminDashboard = () => {
                     <div className="header-cell">Status</div>
                     <div className="header-cell">Actions</div>
                   </div>
-                  {appointments.map(appointment => (
+                  {appointments.map((appointment) => (
                     <div key={appointment._id} className="table-row">
                       <div className="table-cell">
                         <div className="customer-info">
-                          <div className="customer-name">{appointment.customer?.name}</div>
-                          <div className="customer-email">{appointment.customer?.email}</div>
+                          <div className="customer-name">
+                            {appointment.customer?.name}
+                          </div>
+                          <div className="customer-email">
+                            {appointment.customer?.email}
+                          </div>
                         </div>
                       </div>
                       <div className="table-cell">
                         <div className="service-info">
-                          <div className="service-name">{appointment.service?.name}</div>
-                          <div className="service-price">${appointment.service?.price}</div>
+                          <div className="service-name">
+                            {appointment.service?.name}
+                          </div>
+                          <div className="service-price">
+                            ${appointment.service?.price}
+                          </div>
                         </div>
                       </div>
                       <div className="table-cell">
                         <div className="datetime-info">
                           <div className="appointment-date">
-                            {new Date(appointment.appointmentDate).toLocaleDateString()}
+                            {new Date(
+                              appointment.appointmentDate
+                            ).toLocaleDateString()}
                           </div>
-                          <div className="appointment-time">{appointment.appointmentTime}</div>
+                          <div className="appointment-time">
+                            {appointment.appointmentTime}
+                          </div>
                         </div>
                       </div>
                       <div className="table-cell">
                         <div className="vehicle-info">
                           <div className="vehicle-details">
-                            {appointment.vehicleInfo.year} {appointment.vehicleInfo.make} {appointment.vehicleInfo.model}
+                            {appointment.vehicleInfo.year}{" "}
+                            {appointment.vehicleInfo.make}{" "}
+                            {appointment.vehicleInfo.model}
                           </div>
-                          <div className="vehicle-plate">{appointment.vehicleInfo.plateNumber}</div>
+                          <div className="vehicle-plate">
+                            {appointment.vehicleInfo.plateNumber}
+                          </div>
                         </div>
                       </div>
                       <div className="table-cell">
-                        <span className={`status-badge ${getStatusColor(appointment.status)}`}>
+                        <span
+                          className={`status-badge ${getStatusColor(
+                            appointment.status
+                          )}`}
+                        >
                           {appointment.status}
                         </span>
                       </div>
                       <div className="table-cell">
                         <div className="action-buttons">
-                          {appointment.status === 'pending' && (
-                            <button 
+                          {appointment.status === "pending" && (
+                            <button
                               className="btn btn-sm btn-success"
-                              onClick={() => updateAppointmentStatus(appointment._id, 'confirmed')}
+                              onClick={() =>
+                                updateAppointmentStatus(
+                                  appointment._id,
+                                  "confirmed"
+                                )
+                              }
                             >
                               Confirm
                             </button>
                           )}
-                          {appointment.status === 'confirmed' && (
-                            <button 
+                          {appointment.status === "confirmed" && (
+                            <button
                               className="btn btn-sm btn-warning"
-                              onClick={() => updateAppointmentStatus(appointment._id, 'in-progress')}
+                              onClick={() =>
+                                updateAppointmentStatus(
+                                  appointment._id,
+                                  "in-progress"
+                                )
+                              }
                             >
                               Start
                             </button>
                           )}
-                          {appointment.status === 'in-progress' && (
-                            <button 
+                          {appointment.status === "in-progress" && (
+                            <button
                               className="btn btn-sm btn-success"
-                              onClick={() => updateAppointmentStatus(appointment._id, 'completed')}
+                              onClick={() =>
+                                updateAppointmentStatus(
+                                  appointment._id,
+                                  "completed"
+                                )
+                              }
                             >
                               Complete
                             </button>
                           )}
-                          {(appointment.status === 'pending' || appointment.status === 'confirmed') && (
-                            <button 
+                          {(appointment.status === "pending" ||
+                            appointment.status === "confirmed") && (
+                            <button
                               className="btn btn-sm btn-danger"
-                              onClick={() => updateAppointmentStatus(appointment._id, 'cancelled')}
+                              onClick={() =>
+                                updateAppointmentStatus(
+                                  appointment._id,
+                                  "cancelled"
+                                )
+                              }
                             >
                               Cancel
                             </button>
@@ -350,34 +420,42 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          {activeTab === 'services' && (
+          {activeTab === "services" && (
             <div className="services-section">
               <h2 className="section-title">Manage Services</h2>
               {services.length > 0 ? (
                 <div className="services-grid">
-                  {services.map(service => (
+                  {services.map((service) => (
                     <div key={service._id} className="service-admin-card card">
                       <div className="card-header">
                         <h3 className="service-name">{service.name}</h3>
-                        <span className={`category-badge category-${service.category}`}>
+                        <span
+                          className={`category-badge category-${service.category}`}
+                        >
                           {service.category}
                         </span>
                       </div>
                       <div className="card-body">
-                        <p className="service-description">{service.description}</p>
+                        <p className="service-description">
+                          {service.description}
+                        </p>
                         <div className="service-details">
                           <div className="detail-item">
                             <span className="detail-label">Price:</span>
-                            <span className="detail-value">${service.price}</span>
+                            <span className="detail-value">
+                              ${service.price}
+                            </span>
                           </div>
                           <div className="detail-item">
                             <span className="detail-label">Duration:</span>
-                            <span className="detail-value">{service.duration} min</span>
+                            <span className="detail-value">
+                              {service.duration} min
+                            </span>
                           </div>
                           <div className="detail-item">
                             <span className="detail-label">Status:</span>
                             <span className="detail-value">
-                              {service.isActive ? '✅ Active' : '❌ Inactive'}
+                              {service.isActive ? "✅ Active" : "❌ Inactive"}
                             </span>
                           </div>
                         </div>
@@ -422,7 +500,11 @@ const AdminDashboard = () => {
           display: flex;
           align-items: center;
           padding: 2rem;
-          background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+          background: linear-gradient(
+            135deg,
+            var(--primary-blue) 0%,
+            var(--secondary-blue) 100%
+          );
           color: var(--white);
         }
 

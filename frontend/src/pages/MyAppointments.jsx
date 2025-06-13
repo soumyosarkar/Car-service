@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import axios from "axios";
 
 const MyAppointments = () => {
   const [appointments, setAppointments] = useState([]);
@@ -11,7 +11,7 @@ const MyAppointments = () => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/login');
+      navigate("/login");
       return;
     }
     fetchAppointments();
@@ -19,10 +19,12 @@ const MyAppointments = () => {
 
   const fetchAppointments = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/appointments/my-appointments');
+      const response = await axios.get(
+        "https://car-service-backend-zqmk.onrender.com/api/appointments/my-appointments"
+      );
       setAppointments(response.data);
     } catch (error) {
-      console.error('Error fetching appointments:', error);
+      console.error("Error fetching appointments:", error);
     } finally {
       setLoading(false);
     }
@@ -30,13 +32,13 @@ const MyAppointments = () => {
 
   const getStatusColor = (status) => {
     const colors = {
-      pending: 'status-pending',
-      confirmed: 'status-confirmed',
-      'in-progress': 'status-in-progress',
-      completed: 'status-completed',
-      cancelled: 'status-cancelled'
+      pending: "status-pending",
+      confirmed: "status-confirmed",
+      "in-progress": "status-in-progress",
+      completed: "status-completed",
+      cancelled: "status-cancelled",
     };
-    return colors[status] || 'status-pending';
+    return colors[status] || "status-pending";
   };
 
   if (loading) {
@@ -54,7 +56,9 @@ const MyAppointments = () => {
       <div className="container">
         <div className="page-header">
           <h1 className="page-title">My Appointments</h1>
-          <p className="page-subtitle">Track and manage your service appointments</p>
+          <p className="page-subtitle">
+            Track and manage your service appointments
+          </p>
           <Link to="/book-appointment" className="btn btn-primary">
             Book New Appointment
           </Link>
@@ -62,51 +66,69 @@ const MyAppointments = () => {
 
         {appointments.length > 0 ? (
           <div className="appointments-grid">
-            {appointments.map(appointment => (
+            {appointments.map((appointment) => (
               <div key={appointment._id} className="appointment-card card">
                 <div className="card-header">
                   <div className="appointment-header">
-                    <h3 className="service-name">{appointment.service?.name}</h3>
-                    <span className={`status-badge ${getStatusColor(appointment.status)}`}>
+                    <h3 className="service-name">
+                      {appointment.service?.name}
+                    </h3>
+                    <span
+                      className={`status-badge ${getStatusColor(
+                        appointment.status
+                      )}`}
+                    >
                       {appointment.status}
                     </span>
                   </div>
                 </div>
-                
+
                 <div className="card-body">
                   <div className="appointment-details">
                     <div className="detail-row">
                       <span className="detail-label">📅 Date:</span>
                       <span className="detail-value">
-                        {new Date(appointment.appointmentDate).toLocaleDateString()}
+                        {new Date(
+                          appointment.appointmentDate
+                        ).toLocaleDateString()}
                       </span>
                     </div>
-                    
+
                     <div className="detail-row">
                       <span className="detail-label">🕒 Time:</span>
-                      <span className="detail-value">{appointment.appointmentTime}</span>
+                      <span className="detail-value">
+                        {appointment.appointmentTime}
+                      </span>
                     </div>
-                    
+
                     <div className="detail-row">
                       <span className="detail-label">🚗 Vehicle:</span>
                       <span className="detail-value">
-                        {appointment.vehicleInfo.year} {appointment.vehicleInfo.make} {appointment.vehicleInfo.model}
+                        {appointment.vehicleInfo.year}{" "}
+                        {appointment.vehicleInfo.make}{" "}
+                        {appointment.vehicleInfo.model}
                       </span>
                     </div>
-                    
+
                     <div className="detail-row">
                       <span className="detail-label">🏷️ Plate:</span>
-                      <span className="detail-value">{appointment.vehicleInfo.plateNumber}</span>
+                      <span className="detail-value">
+                        {appointment.vehicleInfo.plateNumber}
+                      </span>
                     </div>
-                    
+
                     <div className="detail-row">
                       <span className="detail-label">💰 Price:</span>
-                      <span className="detail-value price">${appointment.service?.price}</span>
+                      <span className="detail-value price">
+                        ${appointment.service?.price}
+                      </span>
                     </div>
-                    
+
                     <div className="detail-row">
                       <span className="detail-label">⏱️ Duration:</span>
-                      <span className="detail-value">{appointment.service?.duration} min</span>
+                      <span className="detail-value">
+                        {appointment.service?.duration} min
+                      </span>
                     </div>
 
                     {appointment.notes && (
@@ -121,24 +143,31 @@ const MyAppointments = () => {
                 <div className="card-footer">
                   <div className="appointment-actions">
                     <small className="created-date">
-                      Booked on {new Date(appointment.createdAt).toLocaleDateString()}
+                      Booked on{" "}
+                      {new Date(appointment.createdAt).toLocaleDateString()}
                     </small>
-                    {appointment.status === 'pending' && (
+                    {appointment.status === "pending" && (
                       <div className="status-info">
-                        <span className="info-text">⏳ Awaiting confirmation</span>
+                        <span className="info-text">
+                          ⏳ Awaiting confirmation
+                        </span>
                       </div>
                     )}
-                    {appointment.status === 'confirmed' && (
+                    {appointment.status === "confirmed" && (
                       <div className="status-info">
-                        <span className="info-text">✅ Confirmed - See you soon!</span>
+                        <span className="info-text">
+                          ✅ Confirmed - See you soon!
+                        </span>
                       </div>
                     )}
-                    {appointment.status === 'in-progress' && (
+                    {appointment.status === "in-progress" && (
                       <div className="status-info">
-                        <span className="info-text">🔧 Service in progress</span>
+                        <span className="info-text">
+                          🔧 Service in progress
+                        </span>
                       </div>
                     )}
-                    {appointment.status === 'completed' && (
+                    {appointment.status === "completed" && (
                       <div className="status-info">
                         <span className="info-text">🎉 Service completed</span>
                       </div>
@@ -153,7 +182,10 @@ const MyAppointments = () => {
             <div className="no-appointments-content">
               <div className="no-appointments-icon">📅</div>
               <h3>No Appointments Yet</h3>
-              <p>You haven't booked any appointments yet. Get started by scheduling your first service!</p>
+              <p>
+                You haven't booked any appointments yet. Get started by
+                scheduling your first service!
+              </p>
               <Link to="/book-appointment" className="btn btn-primary btn-lg">
                 Book Your First Appointment
               </Link>
