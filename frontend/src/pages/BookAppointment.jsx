@@ -24,7 +24,7 @@ const BookAppointment = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (!isAuthenticated || !isAdmin) {
+    if (!isAuthenticated) {
       navigate("/");
       return;
     }
