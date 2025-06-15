@@ -19,13 +19,13 @@ const BookAppointment = () => {
     notes: "",
   });
 
-  const { user, isAuthenticated, isAdmin } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate("/");
+      navigate("/login");
       return;
     }
     fetchServices();
@@ -37,16 +37,20 @@ const BookAppointment = () => {
         service: location.state.selectedService._id,
       }));
     }
-  }, [isAuthenticated, isAdmin, navigate, location]);
+  }, [isAuthenticated, navigate, location]);
 
   const fetchServices = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(
         "https://car-service-backend-zqmk.onrender.com/api/services"
       );
       setServices(response.data);
     } catch (error) {
       console.error("Error fetching services:", error);
+      alert("Failed to load services. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -75,12 +79,27 @@ const BookAppointment = () => {
     setLoading(true);
 
     try {
-      await axios.post("https://car-service-backend-zqmk.onrender.com/api/appointments", formData);
-      alert("Appointment booked successfully!");
-      navigate("/my-appointments");
+      const response = await axios.post(
+        "https://car-service-backend-zqmk.onrender.com/api/appointments",
+        {
+          ...formData,
+          userId: user._id // Add user ID to the appointment
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      
+      if (response.data) {
+        alert("Appointment booked successfully!");
+        navigate("/my-appointments");
+      }
     } catch (error) {
       console.error("Error booking appointment:", error);
-      alert("Failed to book appointment. Please try again.");
+      const errorMessage = error.response?.data?.message || "Failed to book appointment. Please try again.";
+      alert(errorMessage);
     } finally {
       setLoading(false);
     }
