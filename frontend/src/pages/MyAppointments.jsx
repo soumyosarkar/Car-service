@@ -120,7 +120,7 @@ const MyAppointments = () => {
                     <div className="detail-row">
                       <span className="detail-label">💰 Price:</span>
                       <span className="detail-value price">
-                        ${appointment.service?.price}
+                        ₹{appointment.service?.price}
                       </span>
                     </div>
 

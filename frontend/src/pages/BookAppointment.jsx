@@ -75,7 +75,7 @@ const BookAppointment = () => {
     setLoading(true);
 
     try {
-      await axios.post("http://localhost:5000/api/appointments", formData);
+      await axios.post("https://car-service-backend-zqmk.onrender.com/api/appointments", formData);
       alert("Appointment booked successfully!");
       navigate("/my-appointments");
     } catch (error) {
@@ -145,7 +145,7 @@ const BookAppointment = () => {
                     <option value="">Choose a service...</option>
                     {services.map((service) => (
                       <option key={service._id} value={service._id}>
-                        {service.name} - ${service.price} ({service.duration}{" "}
+                        {service.name} - ₹{service.price} ({service.duration}{" "}
                         min)
                       </option>
                     ))}
@@ -309,7 +309,7 @@ const BookAppointment = () => {
                     <div className="summary-item">
                       <span className="label">Price:</span>
                       <span className="value price">
-                        ${selectedService.price}
+                        ₹{selectedService.price}
                       </span>
                     </div>
                     <div className="summary-item">

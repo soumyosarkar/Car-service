@@ -95,7 +95,7 @@ const Home = () => {
               <div className="card-body">
                 <h3>Oil Change & Filter</h3>
                 <p>Keep your engine running smoothly with regular oil changes using premium oils.</p>
-                <div className="price">Starting at $39.99</div>
+                <div className="price">Starting at ₹399</div>
               </div>
             </div>
             <div className="service-preview-card card">
@@ -106,7 +106,7 @@ const Home = () => {
               <div className="card-body">
                 <h3>Brake Inspection & Repair</h3>
                 <p>Ensure your safety with comprehensive brake system inspection and repair.</p>
-                <div className="price">Starting at $89.99</div>
+                <div className="price">Starting at ₹899</div>
               </div>
             </div>
           </div>

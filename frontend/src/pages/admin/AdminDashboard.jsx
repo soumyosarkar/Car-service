@@ -165,7 +165,7 @@ const AdminDashboard = () => {
           <div className="stat-card card">
             <div className="stat-icon">💰</div>
             <div className="stat-content">
-              <div className="stat-number">${stats.totalRevenue}</div>
+              <div className="stat-number">₹{stats.totalRevenue}</div>
               <div className="stat-label">Total Revenue</div>
             </div>
           </div>
@@ -315,7 +315,7 @@ const AdminDashboard = () => {
                             {appointment.service?.name}
                           </div>
                           <div className="service-price">
-                            ${appointment.service?.price}
+                            ₹{appointment.service?.price}
                           </div>
                         </div>
                       </div>
@@ -443,7 +443,7 @@ const AdminDashboard = () => {
                           <div className="detail-item">
                             <span className="detail-label">Price:</span>
                             <span className="detail-value">
-                              ${service.price}
+                              ₹{service.price}
                             </span>
                           </div>
                           <div className="detail-item">
